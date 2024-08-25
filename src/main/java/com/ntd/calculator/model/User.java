@@ -35,10 +35,10 @@ public class User {
     private BigDecimal balance = null;
 
     @Column(name = "CREATED_AT",updatable = false)
-    private LocalDateTime createdAt = null;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "UPDATED_AT")
-    private LocalDateTime updatedAt = null;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     public User(String username, String password, String status, BigDecimal balance, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.username = username;

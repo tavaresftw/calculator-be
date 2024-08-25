@@ -30,17 +30,10 @@ public class UserService {
     public UserDTO registerUser(RegisterRequest userRequest) {
         User user = new User();
         validateUsername(userRequest.getUsername());
+        user.setUsername(userRequest.getUsername());
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         user.setBalance(BALANCE_DEFAULT);
         user.setStatus("active");
-
-        System.out.println(userRequest.getUsername());
-        System.out.println(userRequest.getPassword());
-        System.out.println(user.getPassword());
-        System.out.println(user.getBalance());
-
-        System.out.println(user.toString());
-
         try {
             User createdUser = userRepository.save(user);
             return convertToUserDTO(createdUser);
@@ -53,6 +46,7 @@ public class UserService {
     public String loginUser(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
         if (user == null) {
+            System.out.println("User not found");
             throw new RuntimeException("User not found");
         }
 

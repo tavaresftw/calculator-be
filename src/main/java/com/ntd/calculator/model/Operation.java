@@ -18,10 +18,15 @@ import java.math.BigDecimal;
 public class Operation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID", updatable = false, nullable = false)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TYPE")
     private OperationType type;
+
+    @Column(name = "COST")
     private BigDecimal cost;
 
 }

@@ -23,7 +23,6 @@ public class UserController{
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody RegisterRequest registerRequest) {
-        System.out.println(registerRequest);
         try {
             UserDTO createdUserDTO = userService.registerUser(registerRequest);
 

@@ -1,0 +1,10 @@
+package com.ntd.calculator.strategy;
+
+import java.math.BigDecimal;
+
+public class AdditionOperation implements OperationStrategy {
+    @Override
+    public String execute(BigDecimal a, BigDecimal b) {
+        return a.add(b).toString();
+    }
+}

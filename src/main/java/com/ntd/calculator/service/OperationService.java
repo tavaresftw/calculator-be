@@ -8,13 +8,14 @@ import com.ntd.calculator.repository.OperationRepository;
 import com.ntd.calculator.model.Record;
 import com.ntd.calculator.repository.RecordRepository;
 import com.ntd.calculator.repository.UserRepository;
+import com.ntd.calculator.strategy.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OperationService {
@@ -22,12 +23,26 @@ public class OperationService {
     private final RecordRepository recordRepository;
     private final UserRepository userRepository;
     private final RandomStringClient randomStringClient;
+    private final Map<OperationType, OperationStrategy> operationStrategies;
 
-    public OperationService(OperationRepository operationRepository, RecordRepository recordRepository, UserRepository userRepository, RandomStringClient randomStringClient) {
+    public OperationService(OperationRepository operationRepository,
+                            RecordRepository recordRepository,
+                            UserRepository userRepository,
+                            RandomStringClient randomStringClient
+    ) {
         this.operationRepository = operationRepository;
         this.recordRepository = recordRepository;
         this.userRepository = userRepository;
         this.randomStringClient = randomStringClient;
+
+        this.operationStrategies = Map.of(
+                OperationType.ADDITION, new AdditionOperation(),
+                OperationType.SUBTRACTION, new SubtractionOperation(),
+                OperationType.MULTIPLICATION, new MultiplicationOperation(),
+                OperationType.DIVISION, new DivisionOperation(),
+                OperationType.SQUARE_ROOT, new SquareRootOperation(),
+                OperationType.RANDOM_STRING, new RandomStringOperation(randomStringClient)
+        );
     }
 
     @Transactional
@@ -35,14 +50,9 @@ public class OperationService {
         User user = userRepository.findByUsername(username);
         Operation operation = operationRepository.findByType(operationType);
         checkBalance(user, operation);
-        String result = switch (operationType) {
-            case ADDITION -> additionOperation(a, b);
-            case SUBTRACTION -> subtractionOperation(a, b);
-            case MULTIPLICATION -> multiplicationOperation(a, b);
-            case DIVISION -> divisionOperation(a, b);
-            case SQUARE_ROOT -> squareRootOperation(a);
-            case RANDOM_STRING -> randomStringOperation(a);
-        };
+
+        OperationStrategy strategy = operationStrategies.get(operationType);
+        String result = strategy.execute(a, b);
 
         Record record = getRecord(user, operation, result);
         recordRepository.save(record);
@@ -67,40 +77,6 @@ public class OperationService {
                 result,
                 LocalDateTime.now()
         );
-    }
-
-    private String additionOperation(BigDecimal a, BigDecimal b) {
-        return a.add(b).toString();
-    }
-
-    private String subtractionOperation(BigDecimal a, BigDecimal b) {
-        return a.subtract(b).toString();
-    }
-
-    private String multiplicationOperation(BigDecimal a, BigDecimal b) {
-        return a.multiply(b).setScale(2, RoundingMode.HALF_UP).toString();
-    }
-
-    private String divisionOperation(BigDecimal a, BigDecimal b) {
-        if (b.compareTo(BigDecimal.ZERO) == 0) {
-            throw new IllegalArgumentException("Cannot divide by zero");
-        }
-        return a.divide(b, 2, RoundingMode.HALF_UP).toString();
-    }
-
-    private String squareRootOperation(BigDecimal a) {
-        if (a.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Cannot calculate square root of a negative number");
-        }
-        return BigDecimal.valueOf(Math.sqrt(a.longValue())).setScale(2, RoundingMode.HALF_UP).toString();
-    }
-
-    private String randomStringOperation(BigDecimal a) {
-        try {
-            return randomStringClient.getRandomString(a.intValue()).trim();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public List<Record> getRecordsByUser(String username) {

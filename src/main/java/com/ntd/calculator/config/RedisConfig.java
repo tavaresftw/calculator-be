@@ -5,12 +5,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.net.URI;
+
 @Configuration
 public class RedisConfig {
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory("redis", 6379);
+        String redisUrl = System.getenv("REDIS_URL");
+        URI redisUri = URI.create(redisUrl);
+        return new LettuceConnectionFactory(redisUri.getHost(), redisUri.getPort());
     }
 
     @Bean

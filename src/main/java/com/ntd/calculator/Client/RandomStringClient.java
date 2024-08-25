@@ -1,13 +1,21 @@
 package com.ntd.calculator.Client;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
-@FeignClient(name = "randomStringClient", url = "https://www.random.org")
-public interface RandomStringClient {
+@Component
+public class RandomStringClient {
 
-    @GetMapping("/strings/?num=1&len={len}&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new")
-    String getRandomString(@PathVariable("len") Integer len);
+    private final RestTemplate restTemplate;
 
+    public RandomStringClient() {
+        this.restTemplate = new RestTemplate();
+    }
+
+    public String getRandomString(Integer len) {
+        String url = "https://www.random.org/strings/?num=1&len=" + len + "&digits=on&upperalpha=on&loweralpha=on&unique=on&format=plain&rnd=new";
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        return response.getBody();
+    }
 }

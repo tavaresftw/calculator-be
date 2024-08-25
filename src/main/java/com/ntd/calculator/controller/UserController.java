@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
+@RequestMapping("/user")
 @RestController
 public class UserController{
     private final UserService userService;
@@ -22,6 +23,7 @@ public class UserController{
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody RegisterRequest registerRequest) {
+        System.out.println(registerRequest);
         try {
             UserDTO createdUserDTO = userService.registerUser(registerRequest);
 
@@ -47,7 +49,7 @@ public class UserController{
         return ResponseEntity.ok("Logout success");
     }
 
-    @GetMapping("/user/{username}")
+    @GetMapping("/{username}")
     public ResponseEntity<UserDTO> getUser(@PathVariable String username) {
         try {
             UserDTO userDTO = userService.getUser(username);
@@ -57,7 +59,7 @@ public class UserController{
         }
     }
 
-    @PutMapping("/user/{username}/balance")
+    @PutMapping("/{username}/balance")
     public ResponseEntity<UserDTO> addBalance(@PathVariable String username, @RequestBody BigDecimal amount) {
         try {
             UserDTO userDTO = userService.addBalance(username, amount);
@@ -67,7 +69,7 @@ public class UserController{
         }
     }
 
-    @PutMapping("/user/{username}/status")
+    @PutMapping("/{username}/status")
     public ResponseEntity<UserDTO> changeStatus(@PathVariable String username, @RequestBody String status) {
         try {
             UserDTO userDTO = userService.changeStatus(username, status);

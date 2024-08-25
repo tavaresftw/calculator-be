@@ -8,6 +8,7 @@ import com.ntd.calculator.repository.OperationRepository;
 import com.ntd.calculator.model.Record;
 import com.ntd.calculator.repository.RecordRepository;
 import com.ntd.calculator.repository.UserRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class OperationService {
     private final OperationRepository operationRepository;
     private final RecordRepository recordRepository;
@@ -31,7 +33,7 @@ public class OperationService {
     @Transactional
     public String executeOperation(String username, BigDecimal a, BigDecimal b, OperationType operationType) {
         User user = userRepository.findByUsername(username);
-        Operation operation = operationRepository.findByType(operationType.name());
+        Operation operation = operationRepository.findByType(operationType);
         checkBalance(user, operation);
         String result = switch (operationType) {
             case ADDITION -> additionOperation(a, b);

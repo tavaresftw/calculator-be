@@ -19,25 +19,26 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID", updatable = false, nullable = false)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "USERNAME", nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
+    @Column(name = "PASSWORD",nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(name = "STATUS",nullable = false)
     private String status = null;
 
-    @Column(nullable = false)
+    @Column(name = "BALANCE",nullable = false)
     private BigDecimal balance = null;
 
-    @Column(updatable = false)
+    @Column(name = "CREATED_AT",updatable = false)
     private LocalDateTime createdAt = null;
 
-    @Column
-    private LocalDateTime updatedAt;
+    @Column(name = "UPDATED_AT")
+    private LocalDateTime updatedAt = null;
 
     public User(String username, String password, String status, BigDecimal balance, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.username = username;
@@ -48,4 +49,10 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    public User(String username, String password, String status, BigDecimal balance) {
+        this.username = username;
+        this.password = password;
+        this.status = status;
+        this.balance = balance;
+    }
 }

@@ -15,8 +15,8 @@ import static org.mockito.Mockito.when;
 class JwtUtilTest {
 
     private final TokenBlacklistService tokenBlacklistService = mock(TokenBlacklistService.class);
-    private final String SECRET_KEY = "secret123";
-    private final JwtUtil jwtUtil = new JwtUtil(SECRET_KEY, tokenBlacklistService);
+    private final String secretKey = "secret123";
+    private final JwtUtil jwtUtil = new JwtUtil(tokenBlacklistService);
 
     @Test
     void extractUsernameSuccess() {
@@ -24,7 +24,7 @@ class JwtUtilTest {
 
         String token = Jwts.builder()
                 .setSubject(username)
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
 
         String result = jwtUtil.extractUsername(token);
@@ -38,7 +38,7 @@ class JwtUtilTest {
         String token = Jwts.builder()
                 .setSubject(username)
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
 
         assertNotNull(jwtUtil.extractExpiration(token));
@@ -52,7 +52,7 @@ class JwtUtilTest {
         String token = Jwts.builder()
                 .setSubject(username)
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
 
         assertEquals(username, jwtUtil.extractClaim(token, claims -> claims.getSubject()));
@@ -65,7 +65,7 @@ class JwtUtilTest {
         String token = Jwts.builder()
                 .setSubject(username)
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
 
         when(tokenBlacklistService.isTokenBlacklisted(token)).thenReturn(false);
@@ -79,7 +79,7 @@ class JwtUtilTest {
 
         String token = Jwts.builder()
                 .setSubject(username)
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
 
         when(tokenBlacklistService.isTokenBlacklisted(token)).thenReturn(true);

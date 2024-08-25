@@ -7,9 +7,11 @@ import com.ntd.calculator.model.User;
 import com.ntd.calculator.repository.UserRepository;
 import com.ntd.calculator.security.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@Service
 public class UserService {
 
     private final UserRepository userRepository;
@@ -32,8 +34,20 @@ public class UserService {
         user.setBalance(BALANCE_DEFAULT);
         user.setStatus("active");
 
-        User createdUser = userRepository.save(user);
-        return convertToUserDTO(createdUser);
+        System.out.println(userRequest.getUsername());
+        System.out.println(userRequest.getPassword());
+        System.out.println(user.getPassword());
+        System.out.println(user.getBalance());
+
+        System.out.println(user.toString());
+
+        try {
+            User createdUser = userRepository.save(user);
+            return convertToUserDTO(createdUser);
+        } catch (Exception e) {
+            System.out.println("Error");
+            throw new RuntimeException("Error creating user");
+        }
     }
 
     public String loginUser(LoginRequest loginRequest) {
@@ -57,12 +71,16 @@ public class UserService {
     }
 
     public UserDTO getUser(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("User not found");
+        try {
+            User user = userRepository.findByUsername(username);
+
+            return convertToUserDTO(user);
+        }
+        catch (Exception e) {
+            System.out.println(e.getCause() + e.getMessage());
+            throw new RuntimeException("Error getting user");
         }
 
-        return convertToUserDTO(user);
     }
 
     public UserDTO addBalance(String username, BigDecimal amount) {

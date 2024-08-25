@@ -1,18 +1,20 @@
-CREATE TABLE IF NOT EXISTS user (
+CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     status VARCHAR(255) NOT NULL,
-    balance DECIMAL(10, 2) NOT NULL
+    balance DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS operation (
+CREATE TABLE IF NOT EXISTS operations (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     type VARCHAR(255) NOT NULL,
     cost DECIMAL(10, 2) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS record (
+CREATE TABLE IF NOT EXISTS records (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     operation_id BIGINT,
     user_id BIGINT,
@@ -20,6 +22,6 @@ CREATE TABLE IF NOT EXISTS record (
     user_balance DECIMAL(10, 2) NOT NULL,
     operation_response VARCHAR(255) NOT NULL,
     date TIMESTAMP NOT NULL,
-    FOREIGN KEY (operation_id) REFERENCES operation(id),
-    FOREIGN KEY (user_id) REFERENCES user(id)
+    FOREIGN KEY (operation_id) REFERENCES operations(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );

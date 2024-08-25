@@ -4,20 +4,19 @@ import com.ntd.calculator.service.TokenBlacklistService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.function.Function;
+
 @Component
 public class JwtUtil {
-    @Value("${application.secret.key.jwt}")
-    private String SECRET_KEY;
+
+    private String secretKey = "secret123";
 
     private final TokenBlacklistService tokenBlacklistService;
 
-    public JwtUtil(String secretKey, TokenBlacklistService tokenBlacklistService) {
-        SECRET_KEY = secretKey;
+    public JwtUtil(TokenBlacklistService tokenBlacklistService) {
         this.tokenBlacklistService = tokenBlacklistService;
     }
 
@@ -36,7 +35,7 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -50,7 +49,7 @@ public class JwtUtil {
     private String createToken(String subject) {
         return Jwts.builder().setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+                .signWith(SignatureAlgorithm.HS256, secretKey).compact();
     }
 
     public Boolean validateToken(String token, String username) {

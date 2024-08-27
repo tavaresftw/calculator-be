@@ -10,6 +10,9 @@ import com.ntd.calculator.model.Record;
 import com.ntd.calculator.repository.RecordRepository;
 import com.ntd.calculator.repository.UserRepository;
 import com.ntd.calculator.strategy.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,20 +84,21 @@ public class OperationService {
         );
     }
 
-    public List<RecordsResponse> getRecordsByUser(String username) {
+    public List<RecordsResponse> getRecordsByUser(String username, int page, int size) {
         User user = userRepository.findByUsername(username);
         try {
-            List<Record> record = recordRepository.findRecordByUserIdOrderByIdDesc(user.getId());
-            return getRecordsResponse(record);
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Record> recordPage = recordRepository.findRecordByUserIdOrderByIdDesc(user.getId(), pageable);
+            return getRecordsResponse(recordPage.getContent());
         }
         catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private List<RecordsResponse> getRecordsResponse(List<Record> record) {
+    private List<RecordsResponse> getRecordsResponse(List<Record> records) {
         List<RecordsResponse> recordsResponses = new ArrayList<>();
-        for (Record r : record) {
+        for (Record r : records) {
             recordsResponses.add(new RecordsResponse(
                     r.getId(),
                     r.getOperation().getType().name(),

@@ -11,6 +11,8 @@ import com.ntd.calculator.repository.RecordRepository;
 import com.ntd.calculator.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -250,13 +252,16 @@ class OperationServiceTest {
     void getRecordTest() {
         String username = "teste";
         User user = new User();
-        List<Record> expected = List.of(new Record(
-                1L, new Operation(1L, OperationType.ADDITION, new BigDecimal("10.00")), user, new BigDecimal("10.00"), new BigDecimal("20.00"), "result", LocalDateTime.now()
-        ));
-        when(userRepository.findByUsername(any())).thenReturn(user);
-        when(recordRepository.findRecordByUserIdOrderByIdDesc(any())).thenReturn(expected);
 
-        List<RecordsResponse> result = operationService.getRecordsByUser(username);
+        Record record = new Record(
+                1L, new Operation(1L, OperationType.ADDITION, new BigDecimal("10.00")), user, new BigDecimal("10.00"), new BigDecimal("20.00"), "result", LocalDateTime.now()
+        );
+        Page<Record> expected = new PageImpl<>(List.of(record));
+
+        when(userRepository.findByUsername(any())).thenReturn(user);
+        when(recordRepository.findRecordByUserIdOrderByIdDesc(any(), any())).thenReturn(expected);
+
+        List<RecordsResponse> result = operationService.getRecordsByUser(username, 1, 1);
         Assertions.assertNotEquals(List.of(), result);
     }
 
@@ -265,9 +270,9 @@ class OperationServiceTest {
         String username = "teste";
         User user = new User();
         when(userRepository.findByUsername(any())).thenReturn(user);
-        when(recordRepository.findRecordByUserIdOrderByIdDesc(any())).thenReturn(List.of());
+        when(recordRepository.findRecordByUserIdOrderByIdDesc(any(), any())).thenReturn(Page.empty());
 
-        List<RecordsResponse> result = operationService.getRecordsByUser(username);
+        List<RecordsResponse> result = operationService.getRecordsByUser(username, 1, 1);
         Assertions.assertEquals(List.of(), result);
     }
 
@@ -276,8 +281,8 @@ class OperationServiceTest {
         String username = "teste";
         User user = new User();
         when(userRepository.findByUsername(any())).thenReturn(user);
-        when(recordRepository.findRecordByUserIdOrderByIdDesc(any())).thenThrow(RuntimeException.class);
+        when(recordRepository.findRecordByUserIdOrderByIdDesc(any(), any())).thenThrow(RuntimeException.class);
 
-        assertThrows(RuntimeException.class, () -> operationService.getRecordsByUser(username));
+        assertThrows(RuntimeException.class, () -> operationService.getRecordsByUser(username, 1, 1));
     }
 }

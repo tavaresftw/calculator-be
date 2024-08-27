@@ -17,6 +17,8 @@ import java.util.List;
 import com.ntd.calculator.model.Record;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -76,12 +78,12 @@ class OperationControllerTest {
             )
         );
 
-        when(userService.getUsernameFromToken(token)).thenReturn(username);
+        when(userService.getUsernameFromToken(any())).thenReturn(username);
 
-        when(jwtUtil.validateToken(token, username)).thenReturn(true);
-        when(operationService.getRecordsByUser(username)).thenReturn(records);
+        when(jwtUtil.validateToken(any(), any())).thenReturn(true);
+        when(operationService.getRecordsByUser(any(), anyInt(), anyInt())).thenReturn(records);
 
-        assertNotNull(operationController.getRecords(token, username).getBody());
+        assertNotNull(operationController.getRecords(token, username, 1, 1).getBody());
 
     }
 

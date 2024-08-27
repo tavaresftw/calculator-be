@@ -51,10 +51,12 @@ public class OperationController {
     @GetMapping("/user/{username}")
     public ResponseEntity<?> getRecords(
             @RequestHeader("Authorization") String token,
-            @PathVariable String username
+            @PathVariable String username,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
         if(jwtUtil.validateToken(token, username)){
-            List<RecordsResponse> records = operationService.getRecordsByUser(username);
+            List<RecordsResponse> records = operationService.getRecordsByUser(username, page, size);
             return ResponseEntity.ok(records);
         }
         log.info("User=" + username + ", Get records status=failed, " + "Invalid token");

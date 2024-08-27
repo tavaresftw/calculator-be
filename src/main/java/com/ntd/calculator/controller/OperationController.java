@@ -1,7 +1,7 @@
 package com.ntd.calculator.controller;
 
 import com.ntd.calculator.data.OperationRequest;
-import com.ntd.calculator.model.Record;
+import com.ntd.calculator.data.RecordsResponse;
 import com.ntd.calculator.security.JwtUtil;
 import com.ntd.calculator.service.OperationService;
 import com.ntd.calculator.service.UserService;
@@ -48,16 +48,16 @@ public class OperationController {
         return ResponseEntity.badRequest().body("Invalid token");
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user/{username}")
     public ResponseEntity<?> getRecords(
             @RequestHeader("Authorization") String token,
             @PathVariable String username
     ) {
         if(jwtUtil.validateToken(token, username)){
-            List<Record> records = operationService.getRecordsByUser(username);
+            List<RecordsResponse> records = operationService.getRecordsByUser(username);
             return ResponseEntity.ok(records);
         }
-        log.info("User=" + username + ", Operation status=failed, " + "Invalid token");
+        log.info("User=" + username + ", Get records status=failed, " + "Invalid token");
         return ResponseEntity.badRequest().body("Invalid token");
     }
 }

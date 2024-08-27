@@ -88,28 +88,6 @@ public class UserService {
         return convertToUserDTO(updatedUser);
     }
 
-    public UserDTO changeStatus(String username, String status) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-
-        user.setStatus(status);
-        User updatedUser = userRepository.save(user);
-        return convertToUserDTO(updatedUser);
-    }
-
-    public UserDTO changePassword(String username, String newPassword) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-
-        user.setPassword(passwordEncoder.encode(newPassword));
-        User updatedUser = userRepository.save(user);
-        return convertToUserDTO(updatedUser);
-    }
-
     public String getUsernameFromToken(String token) {
         return jwtUtil.extractUsername(token);
     }

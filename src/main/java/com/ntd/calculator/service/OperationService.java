@@ -1,6 +1,7 @@
 package com.ntd.calculator.service;
 
 import com.ntd.calculator.Client.RandomStringClient;
+import com.ntd.calculator.data.RecordsResponse;
 import com.ntd.calculator.model.Operation;
 import com.ntd.calculator.model.User;
 import com.ntd.calculator.model.enums.OperationType;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,13 +81,29 @@ public class OperationService {
         );
     }
 
-    public List<Record> getRecordsByUser(String username) {
+    public List<RecordsResponse> getRecordsByUser(String username) {
         User user = userRepository.findByUsername(username);
         try {
-            return recordRepository.findByUser(user);
+            List<Record> record = recordRepository.findRecordByUserIdOrderByIdDesc(user.getId());
+            return getRecordsResponse(record);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private List<RecordsResponse> getRecordsResponse(List<Record> record) {
+        List<RecordsResponse> recordsResponses = new ArrayList<>();
+        for (Record r : record) {
+            recordsResponses.add(new RecordsResponse(
+                    r.getId(),
+                    r.getOperation().getType().name(),
+                    r.getAmount(),
+                    r.getOperationResponse(),
+                    r.getDate().toString(),
+                    r.getUserBalance()
+            ));
+        }
+        return recordsResponses;
     }
 }

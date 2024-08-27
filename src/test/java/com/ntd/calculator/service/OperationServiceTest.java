@@ -1,6 +1,7 @@
 package com.ntd.calculator.service;
 
 import com.ntd.calculator.Client.RandomStringClient;
+import com.ntd.calculator.data.RecordsResponse;
 import com.ntd.calculator.model.Operation;
 import com.ntd.calculator.model.Record;
 import com.ntd.calculator.model.User;
@@ -250,12 +251,12 @@ class OperationServiceTest {
         String username = "teste";
         User user = new User();
         List<Record> expected = List.of(new Record(
-                1L, new Operation(), user, new BigDecimal("10.00"), new BigDecimal("20.00"), "result", LocalDateTime.now()
+                1L, new Operation(1L, OperationType.ADDITION, new BigDecimal("10.00")), user, new BigDecimal("10.00"), new BigDecimal("20.00"), "result", LocalDateTime.now()
         ));
         when(userRepository.findByUsername(any())).thenReturn(user);
-        when(recordRepository.findByUser(any())).thenReturn(expected);
+        when(recordRepository.findRecordByUserIdOrderByIdDesc(any())).thenReturn(expected);
 
-        List<Record> result = operationService.getRecordsByUser(username);
+        List<RecordsResponse> result = operationService.getRecordsByUser(username);
         Assertions.assertNotEquals(List.of(), result);
     }
 
@@ -264,9 +265,9 @@ class OperationServiceTest {
         String username = "teste";
         User user = new User();
         when(userRepository.findByUsername(any())).thenReturn(user);
-        when(recordRepository.findByUser(any())).thenReturn(List.of());
+        when(recordRepository.findRecordByUserIdOrderByIdDesc(any())).thenReturn(List.of());
 
-        List<Record> result = operationService.getRecordsByUser(username);
+        List<RecordsResponse> result = operationService.getRecordsByUser(username);
         Assertions.assertEquals(List.of(), result);
     }
 
@@ -275,7 +276,7 @@ class OperationServiceTest {
         String username = "teste";
         User user = new User();
         when(userRepository.findByUsername(any())).thenReturn(user);
-        when(recordRepository.findByUser(any())).thenThrow(RuntimeException.class);
+        when(recordRepository.findRecordByUserIdOrderByIdDesc(any())).thenThrow(RuntimeException.class);
 
         assertThrows(RuntimeException.class, () -> operationService.getRecordsByUser(username));
     }

@@ -159,60 +159,6 @@ class UserServiceTest {
     }
 
     @Test
-    void changePasswordSuccess() {
-
-        User user = new User(
-            "username",
-            "password",
-            "active",
-            new BigDecimal("100.00"),
-            LocalDateTime.now(),
-            LocalDateTime.now()
-        );
-        user.setUsername("username");
-        user.setPassword("password");
-
-        when(userRepository.findByUsername(any())).thenReturn(user);
-        when(userRepository.save(any())).thenReturn(user);
-        when(passwordEncoder.encode(any())).thenReturn("password");
-
-        UserDTO userDTO = userService.changePassword("username", "newpassword");
-    }
-
-    @Test
-    void changePasswordFail() {
-        when(userRepository.findByUsername(any())).thenReturn(null);
-
-        assertThrows(RuntimeException.class, () -> userService.changePassword("username", "newpassword"));
-    }
-
-    @Test
-    void changeStatusSuccess() {
-        User user = new User(
-            "username",
-            "password",
-            "active",
-            new BigDecimal("100.00"),
-            LocalDateTime.now(),
-            LocalDateTime.now()
-        );
-
-        when(userRepository.findByUsername(any())).thenReturn(user);
-        when(userRepository.save(any())).thenReturn(user);
-
-        UserDTO userDTO = userService.changeStatus("username", "inactive");
-
-        assertEquals("inactive", userDTO.getStatus());
-    }
-
-    @Test
-    void changeStatusFail() {
-        when(userRepository.findByUsername(any())).thenReturn(null);
-
-        assertThrows(RuntimeException.class, () -> userService.changeStatus("username", "inactive"));
-    }
-
-    @Test
     void getUsernameFromTokenSuccess() {
         when(jwtUtil.extractUsername(any())).thenReturn("username");
 

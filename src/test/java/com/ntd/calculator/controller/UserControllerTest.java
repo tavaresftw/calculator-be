@@ -78,66 +78,6 @@ class UserControllerTest {
     }
 
     @Test
-    void addBalanceSuccess() {
-        String username = "username";
-        BigDecimal amount = new BigDecimal("100.00");
-        UserDTO userDto = new UserDTO(
-                1L,
-                username,
-                "active",
-                new BigDecimal("200.00")
-        );
-
-        when(userService.addBalance(any(), any())).thenReturn(userDto);
-
-        ResponseEntity<UserDTO> response = userController.addBalance(username, amount);
-
-        assertEquals(new BigDecimal("200.00"), response.getBody().getBalance());
-    }
-
-    @Test
-    void addBalanceFail() {
-        String username = "username";
-        BigDecimal amount = new BigDecimal("100.00");
-
-        when(userService.addBalance(any(), any())).thenThrow(new RuntimeException());
-
-        ResponseEntity<UserDTO> response = userController.addBalance(username, amount);
-
-        assertEquals(400, response.getStatusCodeValue());
-    }
-
-    @Test
-    void changeStatusSuccess() {
-        String username = "username";
-        String status = "active";
-        UserDTO userDto = new UserDTO(
-                1L,
-                username,
-                status,
-                new BigDecimal("100.00")
-        );
-
-        when(userService.changeStatus(any(), any())).thenReturn(userDto);
-
-        ResponseEntity<UserDTO> response = userController.changeStatus(username, status);
-
-        assertEquals(status, response.getBody().getStatus());
-    }
-
-    @Test
-    void changeStatusFail() {
-        String username = "username";
-        String status = "active";
-
-        when(userService.changeStatus(any(), any())).thenThrow(new RuntimeException());
-
-        ResponseEntity<UserDTO> response = userController.changeStatus(username, status);
-
-        assertEquals(400, response.getStatusCodeValue());
-    }
-
-    @Test
     void loginUserSuccess() {
         LoginRequest loginRequest = new LoginRequest("username", "password");
 

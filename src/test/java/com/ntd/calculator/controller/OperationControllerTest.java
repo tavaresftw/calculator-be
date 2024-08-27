@@ -1,6 +1,7 @@
 package com.ntd.calculator.controller;
 
 import com.ntd.calculator.data.OperationRequest;
+import com.ntd.calculator.data.RecordsResponse;
 import com.ntd.calculator.model.Operation;
 import com.ntd.calculator.model.User;
 import com.ntd.calculator.model.enums.OperationType;
@@ -64,15 +65,14 @@ class OperationControllerTest {
             LocalDateTime.now()
         );
 
-        List<Record> records = List.of(
-            new Record(
+        List<RecordsResponse> records = List.of(
+            new RecordsResponse(
                 1L,
-                operation,
-                user,
+                "user",
                 new BigDecimal("10.00"),
-                new BigDecimal("10.00"),
-                "20.00",
-                LocalDateTime.now()
+                "10.00",
+                "success",
+                new BigDecimal("110.00")
             )
         );
 

@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 
 @RequestMapping("/user")
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController{
     private final UserService userService;
     private final TokenBlacklistService tokenBlacklistService;
@@ -57,25 +58,4 @@ public class UserController{
             return ResponseEntity.badRequest().build();
         }
     }
-
-    @PutMapping("/{username}/balance")
-    public ResponseEntity<UserDTO> addBalance(@PathVariable String username, @RequestBody BigDecimal amount) {
-        try {
-            UserDTO userDTO = userService.addBalance(username, amount);
-            return ResponseEntity.ok(userDTO);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @PutMapping("/{username}/status")
-    public ResponseEntity<UserDTO> changeStatus(@PathVariable String username, @RequestBody String status) {
-        try {
-            UserDTO userDTO = userService.changeStatus(username, status);
-            return ResponseEntity.ok(userDTO);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
 }

@@ -12,7 +12,7 @@ This project is a web calculator that supports basic operations such as addition
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/username/calculator-be.git`
+1. Clone the repository: `git clone https://github.com/tavaresftw/calculator-be.git`
 2. Navigate to the project directory: `cd calculator`
 3. Build the project: `gradle build`
 4. Start the services with Docker: `docker-compose up`

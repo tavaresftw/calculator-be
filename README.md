@@ -2,19 +2,21 @@
 
 ## Introduction
 
-This project is a web calculator that supports basic operations such as addition, subtraction, multiplication, and division, as well as generating random strings.
+This project is the Backend of a web calculator that supports basic operations such as addition, subtraction, multiplication, and division, square root and generate random strings.
 
 ## Prerequisites
 
 - Java 11
 - Gradle 7.3.3
 - Docker
+- Lombok
 
 ## Installation
+(To run it locally, use the DEVELOP Branch)
 
 1. Clone the repository: `git clone https://github.com/tavaresftw/calculator-be.git`
-2. Navigate to the project directory: `cd calculator`
-3. Build the project: `gradle build`
+2. Navigate to the project directory: `cd calculator-be`
+3. Build with Docker: `docker-compose build`
 4. Start the services with Docker: `docker-compose up`
 
 ## Usage

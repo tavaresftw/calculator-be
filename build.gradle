@@ -25,6 +25,10 @@ repositories {
 	mavenCentral()
 }
 
+bootJar {
+	archiveFileName = 'calculator-be.jar'
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-security'

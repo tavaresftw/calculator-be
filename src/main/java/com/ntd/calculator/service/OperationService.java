@@ -1,6 +1,6 @@
 package com.ntd.calculator.service;
 
-import com.ntd.calculator.Client.RandomStringClient;
+import com.ntd.calculator.client.RandomStringClient;
 import com.ntd.calculator.data.RecordsResponse;
 import com.ntd.calculator.model.Operation;
 import com.ntd.calculator.model.User;

@@ -14,8 +14,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserServiceTest {
 
@@ -133,32 +132,6 @@ class UserServiceTest {
     }
 
     @Test
-    void addBalanceSuccess() {
-        User user = new User(
-            "username",
-            "password",
-            "active",
-            new BigDecimal("100.00"),
-            LocalDateTime.now(),
-            LocalDateTime.now()
-        );
-
-        when(userRepository.findByUsername(any())).thenReturn(user);
-        when(userRepository.save(any())).thenReturn(user);
-
-        UserDTO userDTO = userService.addBalance("username", new BigDecimal("100.00"));
-
-        assertEquals(new BigDecimal("200.00"), userDTO.getBalance());
-    }
-
-    @Test
-    void addBalanceFail() {
-        when(userRepository.findByUsername(any())).thenReturn(null);
-
-        assertThrows(RuntimeException.class, () -> userService.addBalance("username", new BigDecimal("100.00")));
-    }
-
-    @Test
     void getUsernameFromTokenSuccess() {
         when(jwtUtil.extractUsername(any())).thenReturn("username");
 
@@ -174,4 +147,44 @@ class UserServiceTest {
         assertThrows(RuntimeException.class, () -> userService.getUsernameFromToken("token"));
     }
 
+    @Test
+    void registerUserException() {
+        RegisterRequest registerRequest = new RegisterRequest("username", "password");
+
+        when(userRepository.findByUsername(any())).thenReturn(null);
+        when(passwordEncoder.encode(any())).thenReturn("password");
+        when(userRepository.save(any())).thenThrow(RuntimeException.class);
+
+        assertThrows(RuntimeException.class, () -> userService.registerUser(registerRequest));
+    }
+
+    @Test
+    void loginUserException() {
+        User user = new User(
+            1L,
+            "username",
+            "password",
+            "active",
+            new BigDecimal("100.00"),
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        );
+
+        when(userRepository.findByUsername(any())).thenReturn(user);
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
+        when(jwtUtil.generateToken(any())).thenThrow(RuntimeException.class);
+
+        assertThrows(RuntimeException.class, () -> userService.loginUser(new LoginRequest("username", "password")));
+    }
+
+    @Test
+    void testInsertInitialUsers() {
+        User user = new User();
+        user.setUsername("user1");
+        user.setPassword("password1");
+        when(userRepository.findByUsername(anyString())).thenReturn(null);
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        userService.insertInitialUsers();
+    }
 }

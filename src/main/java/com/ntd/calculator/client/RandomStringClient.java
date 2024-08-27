@@ -1,4 +1,4 @@
-package com.ntd.calculator.Client;
+package com.ntd.calculator.client;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

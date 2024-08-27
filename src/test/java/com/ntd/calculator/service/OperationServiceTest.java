@@ -1,6 +1,6 @@
 package com.ntd.calculator.service;
 
-import com.ntd.calculator.Client.RandomStringClient;
+import com.ntd.calculator.client.RandomStringClient;
 import com.ntd.calculator.data.RecordsResponse;
 import com.ntd.calculator.model.Operation;
 import com.ntd.calculator.model.Record;
@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.aot.hint.TypeReference.listOf;
 
 class OperationServiceTest {
 

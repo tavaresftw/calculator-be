@@ -6,6 +6,7 @@ import com.ntd.calculator.data.UserDTO;
 import com.ntd.calculator.model.User;
 import com.ntd.calculator.repository.UserRepository;
 import com.ntd.calculator.security.JwtUtil;
+import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    private final BigDecimal BALANCE_DEFAULT = new BigDecimal("100.00");
+    private final BigDecimal BALANCE_DEFAULT = new BigDecimal("10.00");
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
@@ -26,6 +27,12 @@ public class UserService {
         this.jwtUtil = jwtUtil;
     }
 
+    @PostConstruct
+    public void insertInitialUsers() {
+        registerUser(new RegisterRequest("user1", "password1"));
+        registerUser(new RegisterRequest("user2", "password2"));
+        registerUser(new RegisterRequest("user3", "password3"));
+    }
 
     public UserDTO registerUser(RegisterRequest userRequest) {
         User user = new User();
@@ -75,17 +82,6 @@ public class UserService {
             throw new RuntimeException("Error getting user");
         }
 
-    }
-
-    public UserDTO addBalance(String username, BigDecimal amount) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-
-        user.setBalance(user.getBalance().add(amount));
-        User updatedUser = userRepository.save(user);
-        return convertToUserDTO(updatedUser);
     }
 
     public String getUsernameFromToken(String token) {

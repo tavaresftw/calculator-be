@@ -1,6 +1,6 @@
 package com.ntd.calculator.strategy;
 
-import com.ntd.calculator.Client.RandomStringClient;
+import com.ntd.calculator.client.RandomStringClient;
 
 import java.math.BigDecimal;
 

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,8 +21,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class OperationServiceTest {
 
@@ -248,40 +248,54 @@ class OperationServiceTest {
     }
 
     @Test
-    void getRecordTest() {
+    void getRecordWithFilterTest() {
         String username = "teste";
         User user = new User();
+        String sortBy = "id";
+        Sort.Direction direction = Sort.Direction.DESC;
+        String search = "search";
 
         Record record = new Record(
-                1L, new Operation(1L, OperationType.ADDITION, new BigDecimal("10.00")), user, new BigDecimal("10.00"), new BigDecimal("20.00"), "result", LocalDateTime.now()
+                1L, new Operation(1L, OperationType.ADDITION, new BigDecimal("10.00")), user, new BigDecimal("10.00"), new BigDecimal("20.00"), "result", LocalDateTime.now(), false
         );
         Page<Record> expected = new PageImpl<>(List.of(record));
 
         when(userRepository.findByUsername(any())).thenReturn(user);
-        when(recordRepository.findRecordByUserIdOrderByIdDesc(any(), any())).thenReturn(expected);
+        when(recordRepository.findRecordByUserIdAndFilter(any(), any(), any())).thenReturn(expected);
 
-        List<RecordsResponse> result = operationService.getRecordsByUser(username, 1, 1);
+        List<RecordsResponse> result = operationService.getRecordsByUserWithFilter(username, 1, 1, sortBy, direction, search);
         Assertions.assertNotEquals(List.of(), result);
     }
 
     @Test
-    void getRecordFailedTest() {
+    void getRecordWithFilterExceptionTest() {
         String username = "teste";
         User user = new User();
-        when(userRepository.findByUsername(any())).thenReturn(user);
-        when(recordRepository.findRecordByUserIdOrderByIdDesc(any(), any())).thenReturn(Page.empty());
+        String sortBy = "id";
+        Sort.Direction direction = Sort.Direction.DESC;
+        String search = "search";
 
-        List<RecordsResponse> result = operationService.getRecordsByUser(username, 1, 1);
-        Assertions.assertEquals(List.of(), result);
+        when(userRepository.findByUsername(any())).thenReturn(user);
+        when(recordRepository.findRecordByUserIdAndFilter(any(), any(), any())).thenThrow(RuntimeException.class);
+
+        assertThrows(RuntimeException.class, () -> operationService.getRecordsByUserWithFilter(username, 1, 1, sortBy, direction, search));
     }
 
     @Test
-    void getRecordExceptionTest() {
-        String username = "teste";
-        User user = new User();
-        when(userRepository.findByUsername(any())).thenReturn(user);
-        when(recordRepository.findRecordByUserIdOrderByIdDesc(any(), any())).thenThrow(RuntimeException.class);
+    void softDeleteRecordTest() {
+        Long recordId = 1L;
 
-        assertThrows(RuntimeException.class, () -> operationService.getRecordsByUser(username, 1, 1));
+        when(recordRepository.findById(any())).thenReturn(java.util.Optional.of(new Record()));
+
+        operationService.softDeleteRecord(recordId);
+    }
+
+    @Test
+    void softDeleteRecordFailedTest() {
+        Long recordId = 1L;
+
+        when(recordRepository.findById(any())).thenReturn(java.util.Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> operationService.softDeleteRecord(recordId));
     }
 }

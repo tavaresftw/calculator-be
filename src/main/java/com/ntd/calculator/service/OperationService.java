@@ -13,6 +13,7 @@ import com.ntd.calculator.strategy.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,11 +85,11 @@ public class OperationService {
         );
     }
 
-    public List<RecordsResponse> getRecordsByUser(String username, int page, int size) {
+    public List<RecordsResponse> getRecordsByUserWithFilter(String username, int page, int size, String sortBy, Sort.Direction direction, String search) {
         User user = userRepository.findByUsername(username);
         try {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<Record> recordPage = recordRepository.findRecordByUserIdOrderByIdDesc(user.getId(), pageable);
+            Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+            Page<Record> recordPage = recordRepository.findRecordByUserIdAndFilter(user.getId(), search, pageable);
             return getRecordsResponse(recordPage.getContent());
         }
         catch (Exception e) {
@@ -109,5 +110,11 @@ public class OperationService {
             ));
         }
         return recordsResponses;
+    }
+
+    public void softDeleteRecord(Long recordId) {
+        Record record = recordRepository.findById(recordId).orElseThrow(() -> new RuntimeException("Record not found"));
+        record.setDeleted(true);
+        recordRepository.save(record);
     }
 }

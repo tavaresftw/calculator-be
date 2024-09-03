@@ -42,6 +42,9 @@ public class Record {
     @Column(name = "DATE")
     private LocalDateTime date;
 
+    @Column(name = "DELETED")
+    private boolean deleted = false;
+
     public Record(Operation operation, User user, BigDecimal amount, BigDecimal userBalance, String operationResponse, LocalDateTime date) {
         this.operation = operation;
         this.user = user;

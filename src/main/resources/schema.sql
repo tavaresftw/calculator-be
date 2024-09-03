@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS records (
     user_balance DECIMAL(10, 2) NOT NULL,
     operation_response VARCHAR(255) NOT NULL,
     date TIMESTAMP NOT NULL,
+    deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (operation_id) REFERENCES operations(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );

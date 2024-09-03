@@ -132,6 +132,13 @@ class UserServiceTest {
     }
 
     @Test
+    void loginUserNotFound() {
+        when(userRepository.findByUsername(any())).thenReturn(null);
+
+        assertThrows(RuntimeException.class, () -> userService.loginUser(new LoginRequest("username", "password")));
+    }
+
+    @Test
     void getUsernameFromTokenSuccess() {
         when(jwtUtil.extractUsername(any())).thenReturn("username");
 

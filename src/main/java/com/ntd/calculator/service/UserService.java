@@ -45,7 +45,6 @@ public class UserService {
             User createdUser = userRepository.save(user);
             return convertToUserDTO(createdUser);
         } catch (Exception e) {
-            System.out.println("Error");
             throw new RuntimeException("Error creating user");
         }
     }
@@ -53,7 +52,6 @@ public class UserService {
     public String loginUser(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername());
         if (user == null) {
-            System.out.println("User not found");
             throw new RuntimeException("User not found");
         }
 
@@ -78,8 +76,7 @@ public class UserService {
             return convertToUserDTO(user);
         }
         catch (Exception e) {
-            System.out.println(e.getCause() + e.getMessage());
-            throw new RuntimeException("Error getting user");
+            throw new RuntimeException("Error getting user, message: " + e.getMessage() + ", cause: " + e.getCause());
         }
 
     }

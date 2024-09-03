@@ -28,5 +28,4 @@ public class Operation {
 
     @Column(name = "COST")
     private BigDecimal cost;
-
 }

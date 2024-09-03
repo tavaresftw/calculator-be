@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface RecordRepository extends JpaRepository<Record, Long> {
     @Query("SELECT r FROM Record r WHERE r.user.id = :userId AND r.deleted = false AND " +
-            "(r.operationResponse LIKE %:search% OR " +
-            "r.operation.name LIKE %:search% OR " +
-            "r.amount = :searchNumber OR " +
-            "r.userBalance = :searchNumber OR " +
-            "r.date = :searchDate)")
+            "(LOWER(r.operationResponse) LIKE LOWER(:search) OR " +
+            "LOWER(r.operation.type) LIKE LOWER(:search) OR " +
+            "CAST(r.amount AS string) LIKE LOWER(:search) OR " +
+            "CAST(r.userBalance AS string) LIKE LOWER(:search) OR " +
+            "CAST(r.date AS string) LIKE LOWER(:search))")
     Page<Record> findRecordByUserIdAndFilter(Long userId, String search, Pageable pageable);
 }
